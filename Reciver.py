@@ -14,13 +14,20 @@ print("public.pem and private.pem were generated")
 from Cryptodome.Hash import SHA3_256
 # Python program to find SHA256 hash string of a file
 
-filename = input("Enter the input file name: ")
-h = SHA3_256.new()
-with open(filename, "rb") as f:
-    # Read and update hash string value in blocks of 4K
-    for byte_block in iter(lambda: f.read(4096), b""):
-        h.update(byte_block)
-    print(h.hexdigest())
+
+while True:
+    try:
+        filename = input("Enter the input file name: ")
+        h = SHA3_256.new()
+        with open(filename, "rb") as f:
+            # Read and update hash string value in blocks of 4K
+            for byte_block in iter(lambda: f.read(4096), b""):
+                h.update(byte_block)
+            print(h.hexdigest())
+            break;
+    except:
+        print("Oops!  I COULD NOT FIND THAT FILE, MAKE SURE THAT THE FILE IS IN THE SAME DIRECTORY AS THIS PROGRAM  Try again...")
+
 
 
 
