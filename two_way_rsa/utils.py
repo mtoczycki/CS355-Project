@@ -4,7 +4,7 @@ from Cryptodome.Random import get_random_bytes
 from Cryptodome.Cipher import AES, PKCS1_OAEP
 import sys
 import os
-
+import errno
 def clear_files(a, b):
     if os.path.exists("../public/" + str(a)):
         os.remove("../public/" + str(a))
@@ -21,6 +21,11 @@ def generate_public_and_private_keys(public_key_name, private_key_name):
     file_out.close()
 
     public_key = key.publickey().export_key()
+    try:
+        os.makedirs("../public/")
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
     file_out = open("../public/" + str(public_key_name), "+wb")
     file_out.write(public_key)
     file_out.close()
