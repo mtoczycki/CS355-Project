@@ -5,12 +5,15 @@ from Cryptodome.Cipher import AES, PKCS1_OAEP
 import sys
 import os
 import errno
-def clear_files(a, b):
+def clear_files(a, b, c):
     if os.path.exists("../public/" + str(a)):
         os.remove("../public/" + str(a))
     
     if os.path.exists("../public/" + str(b)):
         os.remove("../public/" + str(b))
+    
+    if os.path.exists(str(c)):
+        os.remove(str(c))
     
 
 def generate_public_and_private_keys(public_key_name, private_key_name):
@@ -117,4 +120,4 @@ def decrypt_and_compare(hash, encrypted_filename, private_key):
     if (data.decode("utf-8") == hash.hexdigest()):
         print("The two files are the identical.")
     else:
-        print("They two files are different.")
+        print("The two files are different.")

@@ -10,5 +10,5 @@ write_encrypted_file(hash, "alice_encrypted_msg.bin", "bob_public_key.pem")
 
 decrypt_and_compare(hash, "bob_encrypted_msg.bin", private_key)
 
-clear_files("bob_encrypted_msg.bin", "bob_public_key.pem")
+clear_files("bob_encrypted_msg.bin", "bob_public_key.pem", "alice_private_key.pem")
 
