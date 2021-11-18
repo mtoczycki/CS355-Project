@@ -54,7 +54,6 @@ def generate_sha3_256_hash():
 
 def write_encrypted_file(hash, encrypted_filename, public_key_name):
     data = hash.hexdigest().encode("utf-8")
-    file_out = open("../public/" + str(encrypted_filename), "+wb")
     print("Waiting for public key...")
     while True:
         try:
@@ -63,6 +62,7 @@ def write_encrypted_file(hash, encrypted_filename, public_key_name):
         except:
             pass
     print("Public key loaded!")
+    
 
     session_key = get_random_bytes(16)
 
@@ -76,6 +76,7 @@ def write_encrypted_file(hash, encrypted_filename, public_key_name):
     
     try:
         #Write the file contents
+        file_out = open("../public/" + str(encrypted_filename), "+wb")
         [ file_out.write(x) for x in (enc_session_key, cipher_aes.nonce, tag, ciphertext) ]
     except:
         print("Something happened while writing the encrypted file!")
