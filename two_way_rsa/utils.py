@@ -51,7 +51,6 @@ def generate_sha3_256_hash():
             print(e)
     return hash
 
-
 def write_encrypted_file(hash, encrypted_filename, public_key_name):
     data = hash.hexdigest().encode("utf-8")
     print("Waiting for public key...")
@@ -86,6 +85,39 @@ def write_encrypted_file(hash, encrypted_filename, public_key_name):
     print("Encrypted file exported!")
     file_out.close()
 
+def write_encrypted_file_silent(hash, encrypted_filename, public_key_name):
+    data = hash.hexdigest().encode("utf-8")
+    # print("Waiting for public key...")
+    while True:
+        try:
+            recipient_key = RSA.import_key(open("../public/" + str(public_key_name)).read())
+            break
+        except:
+            pass
+    # print("Public key loaded!")
+    
+
+    session_key = get_random_bytes(16)
+
+    # Encrypt the session key with the public RSA key
+    cipher_rsa = PKCS1_OAEP.new(recipient_key)
+    enc_session_key = cipher_rsa.encrypt(session_key)
+
+    # Encrypt the data with the AES session key and generate an authentication tag
+    cipher_aes = AES.new(session_key, AES.MODE_EAX)
+    ciphertext, tag = cipher_aes.encrypt_and_digest(data)
+    
+    try:
+        #Write the file contents
+        file_out = open("../public/" + str(encrypted_filename), "+wb")
+        [ file_out.write(x) for x in (enc_session_key, cipher_aes.nonce, tag, ciphertext) ]
+    except:
+        print("Something happened while writing the encrypted file!")
+        print("Halting...")
+        sys.exit(1)
+    
+    # print("Encrypted file exported!")
+    file_out.close()
 
 def decrypt_and_compare(hash, encrypted_filename, private_key):
     private_key = RSA.import_key(private_key)
