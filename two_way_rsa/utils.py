@@ -41,6 +41,7 @@ def generate_sha3_256_hash():
             filename = input("Enter the input file name: ")
             hash = SHA3_256.new()
             with open(filename, "rb") as f:
+                print("Generating hash...")
                 # Read and update hash string value in blocks of 4KB
                 for byte_block in iter(lambda: f.read(4096), b""):
                     hash.update(byte_block)
@@ -53,7 +54,7 @@ def generate_sha3_256_hash():
 
 def write_encrypted_file(hash, encrypted_filename, public_key_name):
     data = hash.hexdigest().encode("utf-8")
-    print("Waiting for public key...")
+    print("Waiting and loading public key, please wait..")
     while True:
         try:
             recipient_key = RSA.import_key(open("../public/" + str(public_key_name)).read())
@@ -87,7 +88,7 @@ def write_encrypted_file(hash, encrypted_filename, public_key_name):
 
 def write_encrypted_file_silent(hash, encrypted_filename, public_key_name):
     data = hash.hexdigest().encode("utf-8")
-    # print("Waiting for public key...")
+    # print("Waiting and loading public key, please wait...")
     while True:
         try:
             recipient_key = RSA.import_key(open("../public/" + str(public_key_name)).read())
@@ -121,7 +122,7 @@ def write_encrypted_file_silent(hash, encrypted_filename, public_key_name):
 
 def decrypt_and_compare(hash, encrypted_filename, private_key):
     private_key = RSA.import_key(private_key)
-    print("Opening encrypted message...")
+    print("Waiting and loading encrypted message, please wait...")
     while True:
         try:
             file_in = open("../public/" + str(encrypted_filename), "rb")
@@ -139,7 +140,7 @@ def decrypt_and_compare(hash, encrypted_filename, private_key):
         print("Halting...")
         sys.exit(1)
     
-    print("Encrypted message loaded!")
+    
 
     # Decrypt the session key with the private RSA key
     cipher_rsa = PKCS1_OAEP.new(private_key)
@@ -148,7 +149,10 @@ def decrypt_and_compare(hash, encrypted_filename, private_key):
     # Decrypt the data with the AES session key
     cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
     data = cipher_aes.decrypt_and_verify(ciphertext, tag)
-    print("Your file:" + hash.hexdigest())
+
+    print("Encrypted message loaded!")
+
+    print("Your file: " + hash.hexdigest())
     print("Their file: " + data.decode("utf-8"))
     if (data.decode("utf-8") == hash.hexdigest()):
         print("The two files are the identical.")

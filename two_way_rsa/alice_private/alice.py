@@ -15,6 +15,7 @@ while True:
         break
     except ValueError as e:
         if str(e) == "Incorrect decryption.":
+            print(e)
             write_encrypted_file_silent(hash, "alice_encrypted_msg.bin", "bob_public_key.pem")
         else:
             raise
